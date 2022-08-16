@@ -60,30 +60,46 @@ export default createStore({
 
     login: async (context, payload) => {
       const { email, password } = payload;
-      const response = await fetch(
-        `https://xcjewels.herokuapp.com/users?email=${email}&password=${password}`
-      );
-      const userData = await response.json();
-      console.log(userData);
-      if (userData.length) {
-        context.commit("setUser", userData[0]);
-        // window.localStorage.setItem("user", JSON.stringify(userData[0]));
-      }
-      if (!userData.length) return alert("No user found");
+      fetch(`https://xcjewels.herokuapp.com/users/login`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
     },
+    // const response = await fetch(
+    //   `https://xcjewels.herokuapp.com/users?email=${email}&password=${password}`
+    // );
+    // const userData = await response.json();
+    // console.log(userData);
+    //   if (userData.length) {
+    //     context.commit("setUser", userData[0]);
+    //     // window.localStorage.setItem("user", JSON.stringify(userData[0]));
+    //   }
+    //   if (!userData.length) return alert("No user found");
+    // },
 
     // REGISTER USER
     register: async (context, user) => {
-      fetch("https://xcjewels.herokuapp.com/users", {
+      fetch("https://xcjewels.herokuapp.com/users/register", {
+        // fetch("http://localhost:5001/users/register", {
         method: "POST",
         body: JSON.stringify(user),
-        mode: cors,
+        // mode: cors,
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       })
         .then((response) => response.json())
-        .then((json) => context.commit("setUser", json));
+        .then((data) => {
+          console.log(data);
+          // context.commit("setUser", json));
+        });
     },
 
     // SHOW ALL OF EM PRODUCTS
@@ -95,9 +111,13 @@ export default createStore({
 
     // SHOW ONE ITEM
     getProduct: async (context, id) => {
-      fetch("https://xcjewels.herokuapp.com/products" + id)
+      console.log(id);
+      fetch("https://xcjewels.herokuapp.com/products/" + id)
         .then((response) => response.json())
-        .then((json) => context.commit("setProduct", json));
+        .then((data) => {
+          console.log(data);
+          context.commit("setProduct", data);
+        });
     },
 
     // PROFILE

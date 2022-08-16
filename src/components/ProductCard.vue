@@ -4,7 +4,7 @@
       <img v-bind:src="product.img" />
       {{ product.title }}
     </div> -->
-    {{ product.title }}
+ <h2>{{ product.title }}</h2>   
   </router-link>
 </template>
 <script>

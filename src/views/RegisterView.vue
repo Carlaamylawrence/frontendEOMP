@@ -47,16 +47,19 @@ export default {
       email: "",
       password: "",
       phone: "",
+      userRole: "",
     };
   },
   methods: {
     register() {
-      this.$store.dispatch("register", {
+      let user = {
         fullname: this.fullname,
         email: this.email,
         password: this.password,
         phone: this.phone,
-      });
+        userRole: this.userRole,
+      };
+      this.$store.dispatch("register", user);
     },
   },
 };
