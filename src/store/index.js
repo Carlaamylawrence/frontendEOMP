@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-
+import { toRaw } from "vue";
 export default createStore({
   state: {
     user: null,
@@ -7,6 +7,7 @@ export default createStore({
     product: null,
     products: null,
     asc: true,
+    cart: [],
     url: "https://xcjewels.herokuapp.com",
   },
   getters: {},
@@ -23,6 +24,13 @@ export default createStore({
     setProducts: (state, products) => {
       state.products = products;
     },
+    addNewCartItems: (state, product) => {
+      state.cart.push(product);
+    },
+    clearCartItems: (state, cart) => {
+      state.cart = cart;
+    },
+
     sortProductsByTitle: (state) => {
       state.products = state.products.sort((a, b) => {
         // return a.number - b.number;
@@ -51,9 +59,8 @@ export default createStore({
     // USERS
     getUsers: async (context) => {
       fetch("https://xcjewels.herokuapp.com/users")
-        .then((res) => res.json())
-        .then((data) => context.commit("setUsers", data))
-        .catch((err) => console.log(err.message));
+        .then((response) => response.json())
+        .then((json) => context.commit("setUsers", json));
     },
 
     // LOGIN USER
@@ -70,19 +77,9 @@ export default createStore({
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          context.state.user = data.user
         });
     },
-    // const response = await fetch(
-    //   `https://xcjewels.herokuapp.com/users?email=${email}&password=${password}`
-    // );
-    // const userData = await response.json();
-    // console.log(userData);
-    //   if (userData.length) {
-    //     context.commit("setUser", userData[0]);
-    //     // window.localStorage.setItem("user", JSON.stringify(userData[0]));
-    //   }
-    //   if (!userData.length) return alert("No user found");
-    // },
 
     // REGISTER USER
     register: async (context, user) => {
@@ -122,16 +119,40 @@ export default createStore({
 
     // PROFILE
     // ADD TO CART
-    addCart: async (context, item) => {
-      context.state.user.cart.push(item);
-      context.dispatch("updateUserInfo", context.state.user);
+    addCart: async (context, id, userid) => {
+     userid = context.state.user.id
+      let cart = toRaw(context.state.cart);
+      cart.push(id);
+      console.log(context.state.cart);
+      context.dispatch("updateUserCart", cart);
     },
     // DELETE CARD LIST ITEM
-    detletCartItem: async (context, item) => {
-      context.state.user.cart = context.state.user.cart.filter(
-        (item) => item.id != item.id
+    detletCartItem: async (context, id) => {
+      const cartCurrent = context.state.cart.filter(
+        (product) => product.id != product.id
       );
-      context.dispatch("updateUserInfo", context.state.user);
+      context.commit("clearCartItems", cartCurrent);
+    },
+
+    updateUserCart: async (context, cart, id) => {
+      // const { id, email, password, fullname, phone, cart, userRole } = user;
+      id = context.state.user.id;
+      fetch("https://xcjewels.herokuapp.com/users/" + id, {
+        method: "PATCH",
+        body: JSON.stringify({
+          email: context.state.email,
+          password: context.state.password,
+          fullname: context.state.fullname,
+          phone: context.state.phone,
+          cart: context.state.cart,
+          userRole: context.state.userRole,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => context.commit("setUser", json));
     },
 
     updateUserInfo: async (context, user) => {

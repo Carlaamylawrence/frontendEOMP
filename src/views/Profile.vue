@@ -1,12 +1,16 @@
 <template>
-  <div class="cart"></div>
-  <div>
-    <p>Welcome to the dashboard</p>
+  <div class="container row">
+    <h4 class="head">YOUR Cart</h4>
+
+    <CartDisplay
+      v-for="product in products"
+      :key="product.id"
+      :product="product"
+    />
   </div>
 </template>
-
 <script>
-// @ is an alias to /src
+import CartDisplay from "../components/CartDisplay.vue";
 export default {
   computed: {
     cart() {
@@ -18,15 +22,14 @@ export default {
     },
   },
   methods: {
-    addCartItem(item) {
-      this.$store.dispatch("addCartItem", item);
-    },
     deleteCartItem(id) {
-      this.$store.dispatch("deleteCartItem", id);
+      this.$store.dispatch("clearCartItems", id);
     },
     updateUserInfo() {
       this.$store.dispatch("updateUserInfo", this.user);
     },
   },
+  components: { CartDisplay },
 };
 </script>
+<style></style>
