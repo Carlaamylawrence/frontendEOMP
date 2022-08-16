@@ -8,10 +8,14 @@ export default createStore({
     products: null,
     asc: true,
     cart: [],
+    jwt: null,
     url: "https://xcjewels.herokuapp.com",
   },
   getters: {},
   mutations: {
+    setJwt: (state, jwt) => {
+      state.jwt = jwt;
+    },
     setUser: (state, user) => {
       state.user = user;
     },
@@ -49,6 +53,7 @@ export default createStore({
     },
   },
   actions: {
+    // USER FUNCTIONALITY
     // USER
     getUser: async (context, id) => {
       fetch("https://xcjewels.herokuapp.com/users/:id" + id)
@@ -78,6 +83,7 @@ export default createStore({
         .then((data) => {
           console.log(data);
           context.state.user = data.user
+          context.state.jwt = data.token
         });
     },
 
@@ -95,10 +101,12 @@ export default createStore({
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
+          context.state.jwt = data.token
           // context.commit("setUser", json));
         });
     },
-
+    
+    // PRODUCT FUNCTIONALITY
     // SHOW ALL OF EM PRODUCTS
     getProducts: async (context) => {
       fetch("https://xcjewels.herokuapp.com/products")
@@ -117,7 +125,38 @@ export default createStore({
         });
     },
 
-    // PROFILE
+    addProduct: async (context, product) => {
+      console.log(context.state.jwt)
+      fetch("https://xcjewels.herokuapp.com/products", {
+        method: "POST",
+        body: JSON.stringify(product),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "x-auth-token": context.state.jwt
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        });
+          // context.commit("setProduct", data));
+    },
+
+    editProduct: async(context, product) => {
+      fetch("https://xcjewels.herokuapp.com/products", {
+        method: "PATCH",
+        body: JSON.stringify(product),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        });
+    },
+    
+    // PROFILE FUNCTIONALITY
     // ADD TO CART
     addCart: async (context, id, userid) => {
      userid = context.state.user.id

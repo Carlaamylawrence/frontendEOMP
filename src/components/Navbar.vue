@@ -1,13 +1,54 @@
 <template>
-  <div id="Nav-links">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/profile">Profile</router-link> |
-    <router-link to="/products">Products</router-link> |
-    <router-link to="/login">Login</router-link> |
-    <router-link to="/Register">Register</router-link> |
+<nav>
+  <div id="Nav-links" class="">
+    
+    <router-link to="/">HOME</router-link> 
+
+    <div id="userNav-links" v-if="user">
+      <router-link to="/products">PRODUCTS</router-link> /
+      <router-link to="/profile">PROFILE</router-link>  /
+      <button class="btn"> LOGOUT </button>
+    </div>
+    <div id="authNav-links" v-else>
+      <router-link to="/login">LOGIN</router-link> /
+      <router-link to="/Register">REGISTER</router-link> 
+   </div>
   </div>
+  </nav>
 </template>
 <script>
-export default {};
+export default {
+  computed: {
+    user() {
+      console.log(this.$store.state.user);
+      return this.$store.state.user;
+    },
+  },
+};
 </script>
-<style></style>
+<style>
+#Nav-links{
+
+  display:flex;
+  justify-content: space-evenly;
+}
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #776b4b;
+  text-decoration: none;
+}
+nav a:hover{
+  
+  color: #523d1e;
+  
+}
+
+nav a.router-link-exact-active {
+  color: #664821;
+}
+</style>

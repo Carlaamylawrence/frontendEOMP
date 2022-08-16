@@ -1,13 +1,13 @@
 <template>
-  <div class="container row">
-    <h4 class="head">YOUR Cart</h4>
-
+    <div>
+      {{user.fullname}}'s Profile
+    </div>
     <CartDisplay
       v-for="product in products"
       :key="product.id"
       :product="product"
     />
-  </div>
+
 </template>
 <script>
 import CartDisplay from "../components/CartDisplay.vue";

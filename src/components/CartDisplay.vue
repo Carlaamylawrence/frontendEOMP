@@ -1,6 +1,13 @@
 <template>
-  <div>
-    <h2>{{ prodcut[0].title }}</h2>
+  <div v-if="product">
+    <div class="card">
+      <h2>{{ product[0].title }}</h2>
+      <img v-bind:src="product[0].img" />
+      <button @click="$store.dispatch('deleteCartItem', product[0])"> DELETE</button>
+    </div>
+  </div>
+  <div v-else>
+    <h2>Cart Empty</h2>
   </div>
 </template>
 <script>
