@@ -1,13 +1,13 @@
 <template>
 <section id="profilePanel">
-    <div>
       {{user.fullname}}'s Profile
-    </div>
+    <div class="cartPanel">
     <CartDisplay
       v-for="product in products"
       :key="product.id"
       :product="product"
     />
+    </div>
 </section>
 </template>
 <script>
@@ -40,5 +40,11 @@ export default {
 background-position: center;
 background-repeat: no-repeat;
 background-size: cover;
+}
+.cartPanel{
+  border-radius: 8px;
+  height: 100%;
+  width:100%;
+  background-color: white;
 }
 </style>

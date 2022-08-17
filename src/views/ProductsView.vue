@@ -1,17 +1,34 @@
 <template>
-<section id="productsPanel">
- <!-- Button trigger modal -->
- <div class="addbtn">
-<button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Add Product Here
-</button>
-</div>
-<div class="products-grid" >
+  <section id="productsPanel" >
+    <!-- Button trigger modal -->
+    <div class="products-grid" v-if="products" >
+      
+        <div class="addbtn">
+          <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Add Product Here
+          </button>
+        </div>
+        <div class="sort-options ">
+            
+            <input class="ms-5" type="text" v-model="search" placeholder="Search" />
+            <button class="btn btn-outline-dark ms-5" @click="sortProducts">
+              Sort By Title
+            </button>
+            <select v-model="category" class="ms-3">
+              <option value="all">All</option>
+              <option value="Earrings">Earrings</option>
+              <option value="Necklace">Necklaces</option>
+              <option value="Rings">Rings</option>
+            </select>
+    </div>
+    <div>
+
   <ProductCard
-    v-for="product in products"
+    v-for="product of products"
     :key="product.id"
     :product="product"
   />
+    </div>
   </div>
  
 
@@ -25,22 +42,120 @@
       </div>
       <div class="modal-body">
         <form  @submit.prevent="addProduct">
-          <label><input type="text" name="title" v-model="title" />Title</label>
-          <label><input type="text" name="img" v-model="img" />Image Url</label>
-          <label><input type="text" name="thumbnail" v-model="thumbnail" />Image Thumbnail</label>
-          <label><input type="number" name="price" v-model="price" />Price</label>
-          <label><input type="text" name="color" v-model="color" />Color</label>
-          <label><input type="text" name="description" v-model="description" />Description</label>
-          <label><input type="number" name="quantity" v-model="quantity" />QTY</label>
-          <label><input type="text" name="category" v-model="category" />Category</label>
-          <label><input type="text" name="sku" v-model="sku" />sku</label>
-          <label><input type="text" name="available" v-model="available" />Available</label>
-          <button>ADD PRODUCT</button>
+          <div class="title form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingTitle"
+              placeholder="Title"
+              v-model="title"
+            />
+            <label for="floatingTitle">Title</label>
+          </div>
+          <div class="Image form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingImage"
+              placeholder="Image"
+              v-model="img"
+            />
+            <label for="floatingImage">Image Url</label>
+          </div>
+          <div class="Thumbnail form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingThumbnail"
+              placeholder="Thumbnail"
+              v-model="thumbnail"
+            />
+            <label for="floatingThumbnail">Thumbnail</label>
+          </div>
+          <div class="Price form-floating">
+            <input
+              type="number"
+              class="form-control"
+              id="floatingPrice"
+              placeholder="Price"
+              v-model="price"
+            />
+            <label for="floatingPrice">Price</label>
+          </div>
+          <div class="form-floating color">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="color"
+            >
+              <option value="Gold">Gold</option>
+              <option value="Silver">Silver</option>
+              <option value="Rose Gold">Rose Gold</option>
+                    
+            </select>
+            <label for="floatingColor">Color</label>
+          </div>
+          <div class="Description form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingDescription"
+              placeholder="Description"
+              v-model="description"
+            />
+            <label for="floatingDescription">Description</label>
+          </div>
+          <div class="Quantity form-floating">
+            <input
+              type="number"
+              class="form-control"
+              id="floatingQuantity"
+              placeholder="Quantity"
+              v-model="quantity"
+            />
+            <label for="floatingQuantity">Quantity</label>
+          </div>
+          <div class="form-floating category">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="category"
+            >
+              <option value="Earrings">Earrings</option>
+              <option value="Necklace">Necklaces</option>
+              <option value="Rings">Rings</option>
+              <option value="Bracelets">Bracelets</option>
+                    
+            </select>
+            <label for="floatingCategory">Category</label>
+          </div>
+          <div class="Sku form-floating">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingSku"
+              placeholder="Sku"
+              v-model="sku"
+            />
+            <label for="floatingSku">Sku</label>
+          </div>
+          <div class="form-floating available">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="available"
+            >
+              <option value="true">Yes</option>
+              <option value="false">Out of Stock</option>
+              
+            </select>
+            <label for="floatingAvailable">Available</label>
+          </div>
+          <button class="btn btn-dark">ADD PRODUCT</button>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -50,17 +165,31 @@
 <script>
 import ProductCard from "../components/ProductCard.vue";
 export default {
+  props: ["id"],
   computed: {
     products() {
       console.log(this.$store.state.products);
-      return this.$store.state.products;
+      return this.$store.state.products?.filter((product)=>{
+        let isMatch = true;
+        if (!product.title?.toLowerCase().includes(this.search.toLowerCase()))
+          isMatch = false;
+        if (this.category !== "all" && product.category !== this.category) isMatch = false;
+        return isMatch;
+      })
     },
     product(){
       return this.$store.state.product;
-    }
+    },
+
+  },
+  components: { ProductCard },
+  mounted() {
+    this.$store.dispatch("getProducts");
   },
   data(){
     return{
+      search:"",
+      category:"all",
         title: "",
         img: "",
         thumbnail: "",
@@ -86,14 +215,15 @@ export default {
         category: this.category,
         sku: this.sku,
         available: this.available,
+        
       };
       this.$store.dispatch("addProduct", product)
+    }, 
+    sortProducts(){
+      this.$store.commit("sortProductsByTitle");
     }
   },
-  components: { ProductCard },
-  mounted() {
-    this.$store.dispatch("getProducts");
-  },
+  
 };
 </script>
 <style>

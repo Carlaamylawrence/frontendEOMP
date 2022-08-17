@@ -46,10 +46,7 @@ export default createStore({
         }
         return 0;
       });
-      if (!state.asc) {
-        state.products.reverse();
-      }
-      state.asc = !state.asc;
+      
     },
   },
   actions: {
@@ -138,8 +135,8 @@ export default createStore({
         .then((response) => response.json())
         .then((data) => {
           console.log(data)
+          context.commit("setProduct", data)
         });
-          // context.commit("setProduct", data));
     },
 
     editProduct: async(context, product) => {
