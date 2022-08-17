@@ -6,7 +6,7 @@
   Add Product Here
 </button>
 </div>
-<div class="products-grid" v-if="products.length">
+<div class="products-grid" >
   <ProductCard
     v-for="product in products"
     :key="product.id"

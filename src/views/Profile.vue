@@ -1,4 +1,5 @@
 <template>
+<section id="profilePanel">
     <div>
       {{user.fullname}}'s Profile
     </div>
@@ -7,7 +8,7 @@
       :key="product.id"
       :product="product"
     />
-
+</section>
 </template>
 <script>
 import CartDisplay from "../components/CartDisplay.vue";
@@ -32,4 +33,12 @@ export default {
   components: { CartDisplay },
 };
 </script>
-<style></style>
+<style>
+#profilePanel{
+  min-height: 90vh;
+  background: url(../assets/castbackground.png);
+background-position: center;
+background-repeat: no-repeat;
+background-size: cover;
+}
+</style>
