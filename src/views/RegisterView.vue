@@ -25,6 +25,10 @@
           >Enter Your Phone number
           <input type="text" name="phone" required v-model="phone"
         /></label>
+        <label
+          >Enter role
+          <input type="text" name="userRole" required v-model="userRole"
+        /></label>
       </fieldset>
       <!-- Button to submit  -->
       <input type="submit" value="Register" />

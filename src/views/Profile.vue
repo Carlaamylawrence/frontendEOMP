@@ -1,5 +1,5 @@
 <template>
-<section id="profilePanel">
+<section v-if="user" id="profilePanel">
       {{user.fullname}}'s Profile
     <div class="cartPanel">
     <CartDisplay

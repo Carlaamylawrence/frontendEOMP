@@ -46,21 +46,22 @@ export default createStore({
         }
         return 0;
       });
-      
     },
   },
   actions: {
     // USER FUNCTIONALITY
     // USER
-    getUser: async (context, id) => {
-      fetch("https://xcjewels.herokuapp.com/users/:id" + id)
-        .then((res) => res.json())
-        .then((json) => context.commit("setUser", json))
-        .catch((err) => console.log(err.message));
-    },
+    // getUser: async (context, id) => {
+    //   fetch("http://localhost:5001/users/ :id ")
+    //     // fetch("https://xcjewels.herokuapp.com/users/:id" + id)
+    //     .then((res) => res.json())
+    //     .then((json) => context.commit("setUser", json))
+    //     .catch((err) => console.log(err.message));
+    // },
     // USERS
     getUsers: async (context) => {
-      fetch("https://xcjewels.herokuapp.com/users")
+      // fetch("https://xcjewels.herokuapp.com/users")
+      fetch("http://localhost:5001/users")
         .then((response) => response.json())
         .then((json) => context.commit("setUsers", json));
     },
@@ -68,8 +69,9 @@ export default createStore({
     // LOGIN USER
 
     login: async (context, payload) => {
-      const { email, password } = payload;
-      fetch(`https://xcjewels.herokuapp.com/users/login`, {
+      // const { email, password } = payload;
+      // fetch(`https://xcjewels.herokuapp.com/users/login`, {
+      fetch(`http://localhost:5001/users/login`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
@@ -79,15 +81,17 @@ export default createStore({
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          context.state.user = data.user
-          context.state.jwt = data.token
+          context.commit("setJwt", data.token);
+          context.commit("setUser", data.user);
+          // context.state.user = data.user;
+          // context.state.jwt = data.token;
         });
     },
 
     // REGISTER USER
     register: async (context, user) => {
-      fetch("https://xcjewels.herokuapp.com/users/register", {
-        // fetch("http://localhost:5001/users/register", {
+      // fetch("https://xcjewels.herokuapp.com/users/register", {
+      fetch("http://localhost:5001/users/register", {
         method: "POST",
         body: JSON.stringify(user),
         // mode: cors,
@@ -98,23 +102,27 @@ export default createStore({
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          context.state.jwt = data.token
+          context.state.jwt = data.token;
           // context.commit("setUser", json));
         });
     },
-    
+
     // PRODUCT FUNCTIONALITY
     // SHOW ALL OF EM PRODUCTS
     getProducts: async (context) => {
-      fetch("https://xcjewels.herokuapp.com/products")
+      // fetch("https://xcjewels.herokuapp.com/products")
+      const res = await fetch("http://localhost:5001/products")
         .then((response) => response.json())
         .then((json) => context.commit("setProducts", json));
+
+      console.log(res);
     },
 
     // SHOW ONE ITEM
     getProduct: async (context, id) => {
       console.log(id);
-      fetch("https://xcjewels.herokuapp.com/products/" + id)
+      // fetch("https://xcjewels.herokuapp.com/products/" + id)
+      fetch("http://localhost:5001/products/" + id)
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -122,24 +130,37 @@ export default createStore({
         });
     },
 
-    addProduct: async (context, product) => {
-      console.log(context.state.jwt)
-      fetch("https://xcjewels.herokuapp.com/products", {
+    addProduct: async (context, data, state) => {
+      console.log(context.state.jwt);
+      // fetch("https://xcjewels.herokuapp.com/products", {
+      fetch("http://localhost:5001/products", {
         method: "POST",
-        body: JSON.stringify(product),
+        body: JSON.stringify({
+          title: data.title,
+          img: data.img,
+          thumbnail: data.thumbnail,
+          price: data.price,
+          color: data.color,
+          description: data.description,
+          quantity: data.quantity,
+          category: data.category,
+          sku: data.sku,
+          available: data.available,
+          user_id: data.user_id,
+        }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
-          "x-auth-token": context.state.jwt
+          "x-auth-token": context.state.jwt,
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
-          context.commit("setProduct", data)
+          console.log(data);
+          context.commit("setProduct", data);
         });
     },
 
-    editProduct: async(context, product) => {
+    editProduct: async (context, product) => {
       fetch("https://xcjewels.herokuapp.com/products", {
         method: "PATCH",
         body: JSON.stringify(product),
@@ -149,14 +170,14 @@ export default createStore({
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data)
+          console.log(data);
         });
     },
-    
+
     // PROFILE FUNCTIONALITY
     // ADD TO CART
     addCart: async (context, id, userid) => {
-     userid = context.state.user.id
+      userid = context.state.user.id;
       let cart = toRaw(context.state.cart);
       cart.push(id);
       console.log(context.state.cart);
